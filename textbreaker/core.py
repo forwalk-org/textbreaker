@@ -224,9 +224,13 @@ class TextBreaker:
         Returns:
             Ordered list of Token objects representing the text structure with positions
         """
-        # Split on word boundaries, whitespace, and punctuation
-        # Pattern captures: words, whitespace sequences, or punctuation/symbols
-        pattern = r'(\w+|\s+|[^\w\s]+)'
+        # Pattern to recognize numbers with commas and dots as separators
+        # Captures numbers like: 1.045, 1,567, 1.1.1, 2.3, 123.456.789, etc.
+        number_pattern = r'\d+(?:[.,]\d+)*'
+
+        # Complete pattern: numbers with separators, words, whitespace, or other characters
+        # Order is important: numbers first, then the rest
+        pattern = f'({number_pattern}|\\w+|\\s+|[^\\w\\s]+)'
         raw_tokens = re.findall(pattern, text)
         tokens: List[Token] = []
         char_pos = 0
@@ -234,9 +238,12 @@ class TextBreaker:
         for tid, part in enumerate(raw_tokens):
             low = part.lower()
 
-            # Classify token based on its characteristics
+            # Token classification based on characteristics
             if part.isspace():
                 ttype = TokenType.WHITESPACE
+            elif re.fullmatch(number_pattern, part):
+                # Numbers with commas and dots are classified as OTHER
+                ttype = TokenType.OTHER
             elif low in self.break_words:
                 ttype = TokenType.BREAKWORD  # Conjunctions and connectors
             elif part.isalnum():
@@ -248,7 +255,7 @@ class TextBreaker:
             elif re.fullmatch(r'[.!?,;:]+', part):
                 ttype = TokenType.PUNCTUATION  # Sentence punctuation
             else:
-                ttype = TokenType.OTHER  # Numbers, symbols, etc.
+                ttype = TokenType.OTHER  # Other symbols
 
             tokens.append(Token(
                 seq=tid,
