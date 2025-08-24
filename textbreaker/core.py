@@ -224,38 +224,27 @@ class TextBreaker:
         Returns:
             Ordered list of Token objects representing the text structure with positions
         """
-        # Pattern to recognize numbers with commas and dots as separators
-        # Captures numbers like: 1.045, 1,567, 1.1.1, 2.3, 123.456.789, etc.
-        number_pattern = r'\d+(?:[.,]\d+)*'
-
-        # Complete pattern: numbers with separators, words, whitespace, or other characters
-        # Order is important: numbers first, then the rest
-        pattern = f'({number_pattern}|\\w+|\\s+|[^\\w\\s]+)'
+        pattern =  r'[^\s.,;:!?]+(?:[.,;:!?](?!\s)[^\s.,;:!?]*)*|[.,;:!?](?=\s)|\s+'
         raw_tokens = re.findall(pattern, text)
         tokens: List[Token] = []
         char_pos = 0
 
         for tid, part in enumerate(raw_tokens):
-            low = part.lower()
-
             # Token classification based on characteristics
             if part.isspace():
                 ttype = TokenType.WHITESPACE
-            elif re.fullmatch(number_pattern, part):
-                # Numbers with commas and dots are classified as OTHER
-                ttype = TokenType.OTHER
-            elif low in self.break_words:
+            elif part.lower() in self.break_words:
                 ttype = TokenType.BREAKWORD  # Conjunctions and connectors
-            elif part.isalnum():
+            elif re.fullmatch(r'[.!?,;:]+', part):
+                ttype = TokenType.PUNCTUATION  # Sentence punctuation
+            elif any(c.isalpha() for c in part):
                 # Distinguish between short and regular words
                 if len(part) <= self.small_word_length:
                     ttype = TokenType.SMALLWORD  # Articles, prepositions
                 else:
                     ttype = TokenType.WORD  # Regular words
-            elif re.fullmatch(r'[.!?,;:]+', part):
-                ttype = TokenType.PUNCTUATION  # Sentence punctuation
             else:
-                ttype = TokenType.OTHER  # Other symbols
+                ttype = TokenType.OTHER  # Other symbols / number
 
             tokens.append(Token(
                 seq=tid,
