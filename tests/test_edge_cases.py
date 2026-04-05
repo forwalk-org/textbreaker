@@ -73,3 +73,43 @@ class TestEdgeCases:
 
         assert len(result) == 1
         assert result[0] == text
+
+    def test_very_short_line_length(self):
+        """Test with very small line length."""
+        breaker = TextBreaker(line_length=1)
+        text = "a b c d"
+        result = breaker.wrap(text)
+
+        # Should break at each space
+        assert len(result) == 4
+        assert result == ["a", "b", "c", "d"]
+
+    def test_emoji_and_symbols(self):
+        """Test text with emoji and symbols."""
+        text = "Hello 🌍! This is a test 🚀 with many symbols 🛠️."
+        breaker = TextBreaker(line_length=20)
+        result = breaker.wrap(text)
+
+        full_result = ' '.join(result)
+        assert "🌍!" in full_result
+        assert "🚀" in full_result
+
+    def test_only_small_words(self):
+        """Test text consisting only of small words."""
+        text = "is in or by at"
+        breaker = TextBreaker(line_length=5, small_word_length=3)
+        result = breaker.wrap(text)
+
+        # Even if they are all small, it should still wrap them
+        assert len(result) > 1
+        assert "".join(result).replace(" ", "") == text.replace(" ", "")
+
+    def test_trailing_punctuation_only_line(self):
+        """Test case where a line could end up with only punctuation."""
+        text = "This is a sentence. !!!"
+        breaker = TextBreaker(line_length=19)
+        result = breaker.wrap(text)
+
+        # 'This is a sentence.' is exactly 19 chars
+        # '!!!' should be on the next line
+        assert "!!!" in result[-1]
