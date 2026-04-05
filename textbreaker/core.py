@@ -224,12 +224,13 @@ class TextBreaker:
         Returns:
             Ordered list of Token objects representing the text structure with positions
         """
-        pattern =  r'[^\s.,;:!?]+(?:[.,;:!?](?!\s)[^\s.,;:!?]*)*|[.,;:!?](?=\s)|\s+'
-        raw_tokens = re.findall(pattern, text)
+        pattern = r'\s+|[.,;:!?]+|[^\s.,;:!?]+'
         tokens: List[Token] = []
-        char_pos = 0
 
-        for tid, part in enumerate(raw_tokens):
+        for tid, match in enumerate(re.finditer(pattern, text)):
+            part = match.group(0)
+            char_pos = match.start()
+
             # Token classification based on characteristics
             if part.isspace():
                 ttype = TokenType.WHITESPACE
@@ -252,7 +253,6 @@ class TextBreaker:
                 length=len(part),
                 char_start=char_pos
             ))
-            char_pos += len(part)
 
         return tokens
 
