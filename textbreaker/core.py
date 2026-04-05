@@ -345,8 +345,9 @@ class TextBreaker:
         left = tokens[idx - 1] if idx > 0 else None
         right = tokens[idx + 1] if idx < len(tokens) - 1 else None
 
-        return ((left and left.token_type == TokenType.WHITESPACE)
-                or (right and right.token_type == TokenType.WHITESPACE))
+        left_is_ws = left is not None and left.token_type == TokenType.WHITESPACE
+        right_is_ws = right is not None and right.token_type == TokenType.WHITESPACE
+        return left_is_ws or right_is_ws
 
     def _find_break_points(self, tokens: List[Token]) -> List[int]:
         """
@@ -461,7 +462,7 @@ class TextBreaker:
             # Apply different penalty factors based on candidate source
             penalty_factor = base_penalty if window_candidates else base_penalty * 5
 
-            def score_candidate(idx_token_pair):
+            def score_candidate(idx_token_pair: Tuple[int, Token]) -> float:
                 """
                 Calculate candidate score: separation_rank - distance_penalty
 
