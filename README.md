@@ -262,11 +262,11 @@ cd textbreaker
 # Install in development mode with dev dependencies
 pip install -e ".[dev]"
 
-# Run tests
-pytest
+# Run tests locally in a Docker container using Tox (recommended)
+./script/test-local.sh
 
-# Run tests with coverage
-pytest --cov=textbreaker
+# Run a specific Python environment (e.g. py310)
+./script/test-local.sh -e py310
 
 # Format code
 black textbreaker/ tests/
@@ -277,18 +277,17 @@ mypy textbreaker/
 
 ### Running Tests
 
+For local development, it is highly recommended to run tests inside the multi-python Docker container to ensure full compatibility across multiple Python environments without installing them locally:
+
 ```bash
-# Run all tests
-pytest
+# Run the entire test suite across all Python environments
+./script/test-local.sh
 
-# Run with verbose output
-pytest -v
+# Run a specific Python environment (e.g., py310, py311)
+./script/test-local.sh -e py310
 
-# Run specific test file
-pytest tests/test_basic.py
-
-# Run tests with coverage report
-pytest --cov=textbreaker --cov-report=html
+# Pass additional arguments to pytest through tox (e.g., verbose mode or filter)
+./script/test-local.sh -e py310 -- -v -k "test_tokenization"
 ```
 
 ## License
