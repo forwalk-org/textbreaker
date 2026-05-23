@@ -311,9 +311,10 @@ class TextBreaker:
                 ntype = next_t.token_type if next_t else None
 
                 # Try exact match first, then fallback to partial matches
-                rank = rank_map.get((ptype, ntype),
-                       rank_map.get((ptype, None),
-                       rank_map.get((None, ntype), 0)))
+                rank = rank_map.get(
+                    (ptype, ntype),
+                    rank_map.get((ptype, None), rank_map.get((None, ntype), 0))
+                )
 
             elif tok.token_type == TokenType.PUNCTUATION:
                 # Allow breaks after punctuation even without explicit whitespace
@@ -349,7 +350,7 @@ class TextBreaker:
         right_is_ws = right is not None and right.token_type == TokenType.WHITESPACE
         return left_is_ws or right_is_ws
 
-    def _find_break_points(self, tokens: List[Token]) -> List[int]:
+    def _find_break_points(self, tokens: List[Token]) -> List[int]:  # noqa: C901
         """
         Determine optimal line break positions using efficient token-based algorithm.
 

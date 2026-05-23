@@ -5,15 +5,50 @@ from textbreaker import TextBreaker
 
 EDGE_CASES = [
     ("empty_string", "", {"line_length": 50}, "Empty string should return empty list"),
-    ("whitespace_only", "   \n\t  ", {"line_length": 50}, "Whitespace-only string should return single empty line"),
+    (
+        "whitespace_only",
+        "   \n\t  ",
+        {"line_length": 50},
+        "Whitespace-only string should return single empty line",
+    ),
     ("single_character", "A", {"line_length": 50}, "Single character"),
     ("single_word", "Hello", {"line_length": 50}, "Single word"),
-    ("very_long_word", "supercalifragilisticexpialidocious", {"line_length": 20}, "Word longer than line length"),
-    ("alphabet_sequence", "a b c d e f g h i j k l m n o p q r s t u v w x y z", {"line_length": 30}, "Alphabet sequence with spaces"),
-    ("numbers_only", "123456789 987654321 111222333 444555666", {"line_length": 25}, "Numbers only"),
-    ("mixed_alphanumeric", "Test123 Data456 Code789 File000", {"line_length": 20}, "Mixed letters and numbers"),
-    ("punctuation_heavy", "Hello! How are you? Fine, thanks. Good; very good: excellent.", {"line_length": 25}, "Heavy punctuation usage"),
-    ("no_spaces", "Thisisaverylongstringwithoutanyspacesatall", {"line_length": 15}, "No spaces - should not break"),
+    (
+        "very_long_word",
+        "supercalifragilisticexpialidocious",
+        {"line_length": 20},
+        "Word longer than line length",
+    ),
+    (
+        "alphabet_sequence",
+        "a b c d e f g h i j k l m n o p q r s t u v w x y z",
+        {"line_length": 30},
+        "Alphabet sequence with spaces",
+    ),
+    (
+        "numbers_only",
+        "123456789 987654321 111222333 444555666",
+        {"line_length": 25},
+        "Numbers only",
+    ),
+    (
+        "mixed_alphanumeric",
+        "Test123 Data456 Code789 File000",
+        {"line_length": 20},
+        "Mixed letters and numbers",
+    ),
+    (
+        "punctuation_heavy",
+        "Hello! How are you? Fine, thanks. Good; very good: excellent.",
+        {"line_length": 25},
+        "Heavy punctuation usage",
+    ),
+    (
+        "no_spaces",
+        "Thisisaverylongstringwithoutanyspacesatall",
+        {"line_length": 15},
+        "No spaces - should not break",
+    ),
 ]
 
 ENGLISH_SENTENCES = [
@@ -82,9 +117,15 @@ TECHNICAL_CASES = [
     ("urls", "Visit https://www.example.com/very/long/path/to/resource for more info", {"line_length": 25}, "URLs in text"),
     ("emails", "Contact support@company.com or sales@business.org for assistance", {"line_length": 30}, "Email addresses"),
     ("mixed_languages", "Hello mundo, comment ça va? Wie geht es dir?", {"line_length": 20}, "Mixed languages in one text"),
-    ("scientific", "H2O + NaCl → Chemical reaction at 25°C under standard conditions", {"line_length": 25}, "Scientific notation"),
+    (
+        "scientific",
+        "H2O + NaCl → Chemical reaction at 25°C under standard conditions",
+        {"line_length": 25},
+        "Scientific notation",
+    ),
     ("mathematical", "f(x) = 2x² + 3x - 5 where x ∈ ℝ and x > 0", {"line_length": 20}, "Mathematical expressions"),
 ]
+
 
 # === HELPER FOR PARAMETRIZATION ===
 
@@ -114,6 +155,7 @@ def get_all_test_cases():
 
     return cases
 
+
 @pytest.mark.parametrize("text, params", get_all_test_cases())
 def test_comprehensive_wrapping(text, params):
     breaker = TextBreaker(**params)
@@ -130,7 +172,7 @@ def test_comprehensive_wrapping(text, params):
     # Basic length check (with high tolerance for words that can't be broken)
     line_length = params.get('line_length', 50)
     tolerance = params.get('tolerance', 0.3)
-    max_allowed = line_length * (1 + tolerance) * 2 # High multiplier for un-breakable words
+    max_allowed = line_length * (1 + tolerance) * 2  # High multiplier for un-breakable words
 
     for line in lines:
         # If line has no spaces and is longer than max_allowed, it's a single long word (acceptable for now)

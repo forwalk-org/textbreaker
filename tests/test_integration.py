@@ -1,7 +1,6 @@
 """
 Integration tests for real-world scenarios.
 """
-import pytest
 from textbreaker import TextBreaker
 
 
@@ -63,7 +62,7 @@ class TestIntegration:
         configs = [
             TextBreaker(line_length=40, balanced=0.0),  # Pure linguistic
             TextBreaker(line_length=40, balanced=2.0),  # Balanced
-            TextBreaker(line_length=40, tolerance=0.1), # Strict
+            TextBreaker(line_length=40, tolerance=0.1),  # Strict
             TextBreaker(line_length=40, tolerance=0.8)  # Flexible
         ]
 

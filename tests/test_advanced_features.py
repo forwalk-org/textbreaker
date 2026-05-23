@@ -1,7 +1,6 @@
 """
 Test advanced features and configuration options.
 """
-import pytest
 from textbreaker import TextBreaker
 
 

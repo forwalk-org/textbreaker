@@ -1,7 +1,6 @@
 """
 Test basic text wrapping functionality.
 """
-import pytest
 from textbreaker import TextBreaker
 
 

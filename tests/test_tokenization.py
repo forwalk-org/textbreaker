@@ -1,5 +1,5 @@
-import pytest
 from textbreaker.core import TextBreaker, TokenType
+
 
 def test_token_splitting_punctuation_no_space():
     breaker = TextBreaker(line_length=10)
@@ -13,12 +13,12 @@ def test_token_splitting_punctuation_no_space():
     assert "." in token_contents
     assert "World" in token_contents
 
+
 def test_token_types_classification():
     breaker = TextBreaker(line_length=10)
     text = "Hello, World! and... more."
     tokens = breaker._tokenize(text)
 
-    types = [t.token_type for t in tokens]
     # Check if punctuation marks are correctly typed
     punctuation_tokens = [t for t in tokens if t.token_type == TokenType.PUNCTUATION]
     assert len(punctuation_tokens) >= 3
@@ -26,6 +26,7 @@ def test_token_types_classification():
     # Check for breakword 'and'
     breakword_tokens = [t for t in tokens if t.token_type == TokenType.BREAKWORD]
     assert any(text[t.char_start:t.char_end].lower() == "and" for t in breakword_tokens)
+
 
 def test_no_character_loss():
     breaker = TextBreaker(line_length=10)
@@ -41,6 +42,7 @@ def test_no_character_loss():
         tokens = breaker._tokenize(text)
         reconstructed = "".join(text[t.char_start:t.char_end] for t in tokens)
         assert reconstructed == text, f"Character loss for: '{text}'"
+
 
 def test_numbers_behavior():
     # Just observing current behavior for numbers

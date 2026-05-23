@@ -1,7 +1,6 @@
 """
 Test edge cases and special scenarios.
 """
-import pytest
 from textbreaker import TextBreaker
 
 
